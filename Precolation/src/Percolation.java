@@ -1,9 +1,9 @@
 public class Percolation {
-	private QuickFindUF uf;
+//	private QuickFindUF uf;
+	private WeightedQuickUnionUF uf;
 	private int n;
 	private int headIndex;
 	private int tailIndex;
-//	private int nn;
 	private boolean[] open;
 	// create N-by-N grid, with all sites blocked
 	public Percolation(int N) {
@@ -11,7 +11,8 @@ public class Percolation {
 		int nn = n*n;
 		headIndex = nn;
 		tailIndex = nn + 1;
-		uf = new QuickFindUF(nn + 2);
+//		uf = new QuickFindUF(nn + 2);
+		uf = new WeightedQuickUnionUF(nn +2);
 		open = new boolean[nn];
 		
 		for(int i = 0; i < n ; i++){

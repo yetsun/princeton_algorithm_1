@@ -57,7 +57,7 @@ public class PercolationStats {
 
 	// test client, described below
 	public static void main(String[] args) {
-		PercolationStats ps = new PercolationStats(200, 200);
+		PercolationStats ps = new PercolationStats(200, 100);
 		System.out.println(ps.mean());
 	}
 }
