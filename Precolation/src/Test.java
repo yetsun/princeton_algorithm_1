@@ -7,6 +7,7 @@ public class Test {
 		p.open(1,  1);		
 		System.out.println(p.percolates());
 		p.open(2, 1);
+		
 		System.out.println(p.percolates());
 		p.open(3, 1);
 		System.out.println(p.percolates());
