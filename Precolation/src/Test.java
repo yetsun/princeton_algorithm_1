@@ -5,6 +5,7 @@ public class Test {
 		// TODO Auto-generated method stub
 		Percolation p = new Percolation(3);
 		p.open(1,  1);
+		
 		System.out.println(p.percolates());
 		p.open(2, 1);
 		System.out.println(p.percolates());
