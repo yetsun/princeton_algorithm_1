@@ -1,5 +1,4 @@
 public class Percolation {
-//	private QuickFindUF uf;
 	private WeightedQuickUnionUF uf;
 	private int n;
 	private int headIndex;
@@ -11,7 +10,6 @@ public class Percolation {
 		int nn = n*n;
 		headIndex = nn;
 		tailIndex = nn + 1;
-//		uf = new QuickFindUF(nn + 2);
 		uf = new WeightedQuickUnionUF(nn +2);
 		open = new boolean[nn];
 		

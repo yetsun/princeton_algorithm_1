@@ -2,10 +2,15 @@ public class PercolationStats {
 	Percolation p;
 	int N;
 	int T;
+	double[] x;
+	double mean;
+	double stddev;
+	
 	// perform T independent computational experiments on an N-by-N grid
 	public PercolationStats(int N, int T) {
 		this.N = N;
 		this.T = T;
+		this.x = new double[T];
 	}
 	
 	//[1, N)
@@ -23,8 +28,6 @@ public class PercolationStats {
 			while(!p.percolates() && t < nn){
 				int i,j;
 				do{
-//					i = getRandom();
-//					j = getRandom();
 					 int rand = StdRandom.uniform(0, nn);
 		             i = rand / N + 1;
 		             j = rand % N + 1;
@@ -34,30 +37,53 @@ public class PercolationStats {
 				p.open(i, j);
 			}
 			
+			 x[c] = ((double)t / (double) (N * N));
+			
 			all += t;
 		}
-		
-		return  (double)all / (double)(T * N * N);
+		mean = (double)all / (double)(T * N * N);
+		return mean;
 	}
 
 	// sample standard deviation of percolation threshold
 	public double stddev() {
-		return 0;
+		if(mean == 0 ) mean();
+		double sum = 0;
+		for(double d : x){
+			sum += (d- mean) * (d-mean);
+		}
+		stddev =  Math.sqrt(sum / (T-1));
+		return stddev;
 	}
 
 	// returns lower bound of the 95% confidence interval
 	public double confidenceLo() {
-		return 0;
+		return mean - (1.96 * stddev / Math.sqrt(T));
 	}
 
 	// returns upper bound of the 95% confidence interval
 	public double confidenceHi() {
-		return 0;
+		return mean + (1.96 * stddev / Math.sqrt(T));
 	}
 
 	// test client, described below
 	public static void main(String[] args) {
-		PercolationStats ps = new PercolationStats(200, 100);
-		System.out.println(ps.mean());
+		
+		int n = StdIn.readInt();
+		int t = StdIn.readInt();
+		
+		if(n < 0 || t < 0){
+			throw new IllegalArgumentException();
+		}
+		
+		PercolationStats ps = new PercolationStats(n,t);
+		StdOut.print("mean                    = ");
+		StdOut.println(ps.mean());
+		StdOut.print("stddev                  = ");
+		StdOut.println(ps.stddev());
+		StdOut.print("95% confidence interval = ");
+		StdOut.print(ps.confidenceLo());
+		StdOut.print(", ");
+		StdOut.print(ps.confidenceHi());
 	}
 }
