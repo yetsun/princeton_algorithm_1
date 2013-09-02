@@ -23,7 +23,7 @@ public class Percolation {
 	}
 
 	private void unionNeighbor(int ij, int i2, int j2){
-		if(softValidate(i2) & softValidate(j2)){
+		if(softValidate(i2) && softValidate(j2)){
 			int ij2 = getArrayIndex(i2, j2);
 			if(open[ij2]){
 				uf.union(ij, ij2);
