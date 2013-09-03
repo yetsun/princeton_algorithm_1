@@ -3,12 +3,13 @@ public class PercolationStats {
     private int N;
     private int T;
     private double[] x;
-    private double mean;
-    private double stddev;
+    private double mean = -100;
+    private double stddev = -100;
+
 
     // perform T independent computational experiments on an N-by-N grid
     public PercolationStats(int N, int T) {
-        
+
         if (N < 0 || T <= 0) {
             throw new IllegalArgumentException();
         }
@@ -24,54 +25,72 @@ public class PercolationStats {
 
     // sample mean of percolation threshold
     public double mean() {
-        long all = 0;
-        for (int c = 0; c < T; c++) {
-            p = new Percolation(N);
 
-            int t = 0;
-            int nn = N * N;
-            while (!p.percolates() && t < nn) {
-                int i, j;
-                do {
-                    int rand = StdRandom.uniform(0, nn);
-                    i = rand / N + 1;
-                    j = rand % N + 1;
-                } while (p.isOpen(i, j));
+        if (needCalculation(mean)) {
+            long all = 0;
+            for (int c = 0; c < T; c++) {
+                p = new Percolation(N);
 
-                t++;
-                p.open(i, j);
+                int t = 0;
+                int nn = N * N;
+                while (!p.percolates() && t < nn) {
+                    int i, j;
+                    do {
+                        int rand = StdRandom.uniform(0, nn);
+                        i = rand / N + 1;
+                        j = rand % N + 1;
+                    } while (p.isOpen(i, j));
+
+                    t++;
+                    p.open(i, j);
+                }
+
+                x[c] = ((double) t / (double) (N * N));
+
+                all += t;
             }
-
-            x[c] = ((double) t / (double) (N * N));
-
-            all += t;
+            mean = (double) all / (double) (T * N * N);
         }
-        mean = (double) all / (double) (T * N * N);
         return mean;
     }
 
     // sample standard deviation of percolation threshold
     public double stddev() {
-        if (mean == 0)
+
+        if (needCalculation(stddev)) {
             mean();
-        double sum = 0;
-        for (double d : x) {
-            sum += (d - mean) * (d - mean);
+            double sum = 0;
+            for (double d : x) {
+                sum += (d - mean()) * (d - mean());
+            }
+            stddev = Math.sqrt(sum / (T - 1));
         }
-        stddev = Math.sqrt(sum / (T - 1));
         return stddev;
     }
 
     // returns lower bound of the 95% confidence interval
     public double confidenceLo() {
-        return mean - (1.96 * stddev / Math.sqrt(T));
+        return mean() - (1.96 * stddev() / Math.sqrt(T));
     }
 
     // returns upper bound of the 95% confidence interval
     public double confidenceHi() {
-        return mean + (1.96 * stddev / Math.sqrt(T));
+        return mean() + (1.96 * stddev() / Math.sqrt(T));
     }
 
+    /**
+     * check if the double is calculated return true if double is still in its
+     * initialization value and need to be calculated
+     * 
+     * @param d
+     * @return
+     */
+    private boolean needCalculation(double d) {
+        // not accurately equivalent to d == Double.NEGATIVE_INFINITY
+        return Math.abs(d - (-100)) < .0000001;
+    }
+
+    
     // test client, described below
     public static void main(String[] args) {
 
