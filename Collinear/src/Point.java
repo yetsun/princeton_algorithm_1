@@ -5,6 +5,9 @@ public class Point implements Comparable<Point> {
 	public final Comparator<Point> SLOPE_ORDER = new Comparator<Point>() {
 		@Override
 		public int compare(Point o1, Point o2) {
+			if (o1 == null || o2 == null) {
+				throw new NullPointerException();
+			}
 			return Double.valueOf(slopeTo(o1)).compareTo(slopeTo(o2));
 		}
 	};
@@ -12,21 +15,20 @@ public class Point implements Comparable<Point> {
 	private int x;
 	private int y;
 
-	public int getX() {
+	private int getX() {
 		return x;
 	}
 
-	public void setX(int x) {
-		this.x = x;
-	}
-
-	public int getY() {
+	/*
+	 * private void setX(int x) { this.x = x; }
+	 */
+	private int getY() {
 		return y;
 	}
 
-	public void setY(int y) {
-		this.y = y;
-	}
+	/*
+	 * private void setY(int y) { this.y = y; }
+	 */
 
 	// construct the point (x, y)
 	public Point(int x, int y) {
@@ -36,11 +38,12 @@ public class Point implements Comparable<Point> {
 
 	// draw this point
 	public void draw() {
-		System.out.print("(" + getX() + ", " + getY() + ")");
+		StdDraw.point(x, y);
 	}
 
 	// draw the line segment from this point to that point
 	public void drawTo(Point that) {
+		StdDraw.line(this.x, this.y, that.x, that.y);
 	}
 
 	// string representation
@@ -50,29 +53,29 @@ public class Point implements Comparable<Point> {
 
 	// is this point lexicographically smaller than that point?
 	public int compareTo(Point that) {
-		if(this.getY() == that.getY()){
+		if (this.getY() == that.getY()) {
 			return Integer.valueOf(this.getX()).compareTo(that.getX());
-		}else{
+		} else {
 			return Integer.valueOf(this.getY()).compareTo(that.getY());
 		}
-		
+
 	}
 
 	// the slope between this point and that point
 	public double slopeTo(Point that) {
 		if (that == null) {
-			return -1;
+			throw new java.lang.NullPointerException();
 		}
 		if (that.getY() == this.getY() && that.getX() == this.getX()) {
-			return Integer.MIN_VALUE;
+			return Double.NEGATIVE_INFINITY;
 		}
 		if (that.getY() == this.getY()) {
 			return 0;
 		}
 		if (that.getX() == this.getX()) {
-			return Integer.MAX_VALUE;
+			return Double.POSITIVE_INFINITY;
 		}
-		return (that.getY() - this.getY()) / (that.getX() - this.getX());
+		return (double)(that.getY() - this.getY()) / (double)(that.getX() - this.getX());
 	}
-	
+
 }

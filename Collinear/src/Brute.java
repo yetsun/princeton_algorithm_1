@@ -1,55 +1,31 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-
 
 public class Brute {
 	public static void main(String[] args) {
+		StdDraw.setXscale(0, 32768);
+		StdDraw.setYscale(0, 32768);
+
 		String name = args[0];
-		FileReader fr = null;
-		BufferedReader br = null;
-		try {
-			fr = new FileReader(new File(name));
-			br = new BufferedReader(fr);
 
-			String line = br.readLine();
-			int count = Integer.valueOf(line);
-			String[] a = null;
-			Point[] pp = new Point[count];
-			int i = 0;
-			while ((line = br.readLine()) != null) {
-				a = line.split(" ");
-				pp[i++] = new Point(Integer.valueOf(a[0]),
-						Integer.valueOf(a[1]));
-			}
+		In in = new In(name);
+		int count = in.readInt();
+		Point[] pp = new Point[count];
+		Point p = null;
 
-			new Brute().foo(pp);
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (br != null)
-				try {
-					br.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			if (fr != null)
-				try {
-					fr.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+		for (int i = 0; i < count; i++) {
+			int x = in.readInt();
+			int y = in.readInt();
+			p = new Point(x, y);
+			pp[i++] = p;
+			p.draw();
 		}
 
+		new Brute().foo(pp);
+
 	}
-	
+
 	private static final String foo = " -> ";
-	private void print(Point p, Point q, Point r, Point s){
+
+	private void print(Point p, Point q, Point r, Point s) {
 		System.out.println(p + foo + q + foo + r + foo + s);
 	}
 
@@ -77,6 +53,7 @@ public class Brute {
 
 							if (s1 == s3) {
 								print(p, q, r, s);
+								p.drawTo(s);
 							}
 						}
 
