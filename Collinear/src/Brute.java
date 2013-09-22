@@ -1,6 +1,8 @@
+import java.util.Arrays;
+
 public class Brute {
-	private static final String BAR = " -> ";
-	
+    private static final String BAR = " -> ";
+
     public static void main(String[] args) {
         StdDraw.setXscale(0, 32768);
         StdDraw.setYscale(0, 32768);
@@ -19,15 +21,20 @@ public class Brute {
             pp[i] = p;
             p.draw();
         }
-
+        Arrays.sort(pp);
         new Brute().foo(pp);
-
     }
 
+    private void sortAndPrint(Point p, Point q, Point r, Point s) {
+        Point[] pp = { p, q, r, s };
+        Arrays.sort(pp);
+        System.out.println(pp[0] + BAR + pp[1] + BAR + pp[2] + BAR + pp[3]);
+        pp[0].drawTo(pp[1]);
+    }
     
-
     private void print(Point p, Point q, Point r, Point s) {
         System.out.println(p + BAR + q + BAR + r + BAR + s);
+        p.drawTo(s);
     }
 
     private void foo(Point[] points) {
@@ -54,7 +61,6 @@ public class Brute {
 
                             if (s1 == s3) {
                                 print(p, q, r, s);
-                                p.drawTo(s);
                             }
                         }
 
