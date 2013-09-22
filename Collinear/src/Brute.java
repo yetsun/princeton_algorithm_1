@@ -25,13 +25,6 @@ public class Brute {
         new Brute().foo(pp);
     }
 
-    private void sortAndPrint(Point p, Point q, Point r, Point s) {
-        Point[] pp = { p, q, r, s };
-        Arrays.sort(pp);
-        System.out.println(pp[0] + BAR + pp[1] + BAR + pp[2] + BAR + pp[3]);
-        pp[0].drawTo(pp[1]);
-    }
-    
     private void print(Point p, Point q, Point r, Point s) {
         System.out.println(p + BAR + q + BAR + r + BAR + s);
         p.drawTo(s);
