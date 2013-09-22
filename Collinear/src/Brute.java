@@ -1,66 +1,67 @@
-
 public class Brute {
-	public static void main(String[] args) {
-		StdDraw.setXscale(0, 32768);
-		StdDraw.setYscale(0, 32768);
+	private static final String BAR = " -> ";
+	
+    public static void main(String[] args) {
+        StdDraw.setXscale(0, 32768);
+        StdDraw.setYscale(0, 32768);
 
-		String name = args[0];
+        String name = args[0];
 
-		In in = new In(name);
-		int count = in.readInt();
-		Point[] pp = new Point[count];
-		Point p = null;
+        In in = new In(name);
+        int count = in.readInt();
+        Point[] pp = new Point[count];
+        Point p = null;
 
-		for (int i = 0; i < count; i++) {
-			int x = in.readInt();
-			int y = in.readInt();
-			p = new Point(x, y);
-			pp[i++] = p;
-			p.draw();
-		}
+        for (int i = 0; i < count; i++) {
+            int x = in.readInt();
+            int y = in.readInt();
+            p = new Point(x, y);
+            pp[i] = p;
+            p.draw();
+        }
 
-		new Brute().foo(pp);
+        new Brute().foo(pp);
 
-	}
+    }
 
-	private static final String foo = " -> ";
+    
 
-	private void print(Point p, Point q, Point r, Point s) {
-		System.out.println(p + foo + q + foo + r + foo + s);
-	}
+    private void print(Point p, Point q, Point r, Point s) {
+        System.out.println(p + BAR + q + BAR + r + BAR + s);
+    }
 
-	private void foo(Point[] points) {
-		Point p = null, q = null, r = null, s = null;
-		double s1 = 0, s2 = 0, s3 = 0;
+    private void foo(Point[] points) {
+        Point p = null, q = null, r = null, s = null;
+        double s1 = 0, s2 = 0, s3 = 0;
 
-		for (int i = 0; i < points.length; i++) {
-			p = points[i];
+        for (int i = 0; i < points.length; i++) {
+            p = points[i];
 
-			for (int j = i + 1; j < points.length; j++) {
-				q = points[j];
-				s1 = p.slopeTo(q);
+            for (int j = i + 1; j < points.length; j++) {
+                q = points[j];
+                s1 = p.slopeTo(q);
 
-				for (int k = j + 1; k < points.length; k++) {
-					r = points[k];
+                for (int k = j + 1; k < points.length; k++) {
+                    r = points[k];
 
-					s2 = p.slopeTo(r);
+                    s2 = p.slopeTo(r);
 
-					if (s1 == s2) {
+                    if (s1 == s2) {
 
-						for (int l = k + 1; l < points.length; l++) {
-							s = points[l];
-							s3 = p.slopeTo(s);
+                        for (int l = k + 1; l < points.length; l++) {
+                            s = points[l];
+                            s3 = p.slopeTo(s);
 
-							if (s1 == s3) {
-								print(p, q, r, s);
-								p.drawTo(s);
-							}
-						}
+                            if (s1 == s3) {
+                                print(p, q, r, s);
+                                p.drawTo(s);
+                            }
+                        }
 
-					}
-				}
+                    }
+                }
 
-			}
-		}
-	}
+            }
+        }
+    }
 }
