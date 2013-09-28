@@ -26,12 +26,12 @@ public class Solver {
             }
         };
 
-/*        Comparator<Board> hcomparator = new Comparator<Board>() {
+        Comparator<Board> hcomparator = new Comparator<Board>() {
             @Override
             public int compare(Board arg0, Board arg1) {
                 return arg0.hamming() - arg1.hamming();
             }
-        };*/
+        };
 
         MinPQ<Board> queue = new MinPQ<Board>(mcomparator);
 
@@ -98,6 +98,7 @@ public class Solver {
         Board initial = new Board(blocks);
 
 //        System.out.println(initial.toString());
+//        initial.twin();
         
         // solve the puzzle
         Solver solver = new Solver(initial);

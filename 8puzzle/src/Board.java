@@ -14,8 +14,9 @@ public class Board {
     // construct a board from an N-by-N array of blocks
     // (where blocks[i][j] = block in row i, column j)
     public Board(int[][] blocks) {
-        this.blocks = blocks;
-        this.dimension = blocks[0].length;
+    	
+        this.blocks = copyArray(blocks);
+        this.dimension = this.blocks[0].length;
         goal = new int[dimension][dimension];
 
         for (int i = 0; i < dimension; i++) {
@@ -89,12 +90,13 @@ public class Board {
             return null;
         }
 
-        if (this.blocks[i][j] == 0) {
-            j++;
-            return twin();
-        }
 
         if (j < dimension() - 1) {
+        	if (this.blocks[i][j] == 0) {
+        		j++;
+        		return twin();
+        	}
+        	
             if (this.blocks[i][j + 1] == 0) {
                 j++;
                 j++;
@@ -120,17 +122,24 @@ public class Board {
             return false;
         }
         
-        Board b = (Board) y;
-
-        int[][] target = b.blocks;
-        for (int i = 0; i < dimension(); i++) {
-            for (int j = 0; j < dimension(); j++) {
-                if (target[i][j] != blocks[i][j]) {
-                    return false;
+        if(y instanceof Board){
+            Board b = (Board) y;
+            if(b.dimension() != this.dimension){
+            	return false;
+            }
+            int[][] target = b.blocks;
+            for (int i = 0; i < dimension(); i++) {
+                for (int j = 0; j < dimension(); j++) {
+                    if (target[i][j] != blocks[i][j]) {
+                        return false;
+                    }
                 }
             }
+            return true;
+        }else{
+        	return false;
         }
-        return true;
+    
     }
 
     // all neighboring boards
@@ -167,9 +176,10 @@ public class Board {
     }
 
     private int[][] copyArray(int[][] a) {
-        int[][] result = new int[dimension()][dimension()];
-        for (int i = 0; i < dimension(); i++) {
-            for (int j = 0; j < dimension(); j++) {
+    	int dim = a[0].length;
+        int[][] result = new int[dim][dim];
+        for (int i = 0; i < dim; i++) {
+            for (int j = 0; j < dim; j++) {
                 result[i][j] = a[i][j];
             }
         }
