@@ -119,8 +119,10 @@ public class Board {
         if (y == null) {
             return false;
         }
+        
+        Board b = (Board) y;
 
-        int[][] target = ((Board) y).blocks;
+        int[][] target = b.blocks;
         for (int i = 0; i < dimension(); i++) {
             for (int j = 0; j < dimension(); j++) {
                 if (target[i][j] != blocks[i][j]) {
@@ -184,7 +186,8 @@ public class Board {
 
     // string representation of the board (in the output format specified below)
     public String toString() {
-        StringBuilder sb = new StringBuilder(dimension());
+        StringBuilder sb = new StringBuilder();
+        sb.append(dimension());
         sb.append("\n");
         for (int i = 0; i < dimension(); i++) {
             for (int j = 0; j < dimension(); j++) {
