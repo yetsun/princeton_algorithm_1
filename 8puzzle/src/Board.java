@@ -5,17 +5,29 @@ public class Board {
     private int[][] blocks;
     private int numberOfMove;
     private int dimension;
-    
-    private int[][] goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
+
+    private int[][] goal = null;
+
+    private int i = 0;
+    private int j = 0;
 
     // construct a board from an N-by-N array of blocks
     // (where blocks[i][j] = block in row i, column j)
     public Board(int[][] blocks) {
         this.blocks = blocks;
         this.dimension = blocks[0].length;
+        goal = new int[dimension][dimension];
+
+        for (int i = 0; i < dimension; i++) {
+            for (int j = 0; j < dimension; j++) {
+                goal[i][j] = (i * dimension + j + 1);
+            }
+        }
+        goal[dimension - 1][dimension - 1] = 0;
+
     }
-    
-	// board dimension N
+
+    // board dimension N
     public int dimension() {
         return dimension;
     }
@@ -43,9 +55,9 @@ public class Board {
                     finder: for (int m = 0; m < dimension(); m++) {
                         for (int n = 0; n < dimension(); n++) {
                             if (goal[i][j] == blocks[m][n]) {
-								result += ((i > m ? (i - m) : (m - i))
-										+ (j > n ? (j - n) : (n - j)));
-								break finder;
+                                result += ((i > m ? (i - m) : (m - i)) + (j > n ? (j - n)
+                                        : (n - j)));
+                                break finder;
                             }
                         }
                     }
@@ -73,25 +85,41 @@ public class Board {
 
     // a board obtained by exchanging two adjacent blocks in the same row
     public Board twin() {
-        Board twin = new Board(this.blocks.clone());
-        for (int i = 0; i < twin.dimension(); i++) {
-            for (int j = 0; j < twin.dimension() - 1; j++) {
-                if (twin.blocks[i][j] != 0 && twin.blocks[i][j + 1] != 0) {
-                    swap(twin.blocks, i, j, i, j + 1);
-                    return twin;
-                }
-            }
+        if (i >= this.dimension()/* && j >= this.dimension() */) {
+            return null;
         }
-        return twin;
+
+        if (this.blocks[i][j] == 0) {
+            j++;
+            return twin();
+        }
+
+        if (j < dimension() - 1) {
+            if (this.blocks[i][j + 1] == 0) {
+                j++;
+                j++;
+                return twin();
+            } else {
+                Board twin = new Board(copyArray(blocks));
+                swap(twin.blocks, i, j, i, j + 1);
+                j++;
+                return twin;
+            }
+        } else {
+            i++;
+            j = 0;
+            return twin();
+
+        }
     }
 
     // does this board equal y?
     public boolean equals(Object y) {
-    	
-    	if(y == null){
-    		return false;
-    	}
-    	
+
+        if (y == null) {
+            return false;
+        }
+
         int[][] target = ((Board) y).blocks;
         for (int i = 0; i < dimension(); i++) {
             for (int j = 0; j < dimension(); j++) {
@@ -129,21 +157,21 @@ public class Board {
         if (m >= 0 && m < dimension() && n >= 0 && n < dimension()) {
             int[][] copy = copyArray(this.blocks);
             swap(copy, i, j, m, n);
-            
-        	Board board = new Board(copy);
-        	board.numberOfMove = this.numberOfMove + 1;
+
+            Board board = new Board(copy);
+            board.numberOfMove = this.numberOfMove + 1;
             list.add(board);
         }
     }
-    
-    private int[][] copyArray(int[][] a){
-    	int[][] result = new int[dimension()][dimension()];
-    	for(int i = 0; i < dimension(); i++){
-    		for(int j = 0; j < dimension(); j++){
-    			result[i][j]  = a[i][j];
-    		}
-    	}
-    	return result;
+
+    private int[][] copyArray(int[][] a) {
+        int[][] result = new int[dimension()][dimension()];
+        for (int i = 0; i < dimension(); i++) {
+            for (int j = 0; j < dimension(); j++) {
+                result[i][j] = a[i][j];
+            }
+        }
+        return result;
     }
 
     private void swap(int[][] blocks, int i, int j, int m, int n) {

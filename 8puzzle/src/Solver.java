@@ -6,15 +6,18 @@ public class Solver {
 
     private List<Board> solution;
     private Board initial;
+    private boolean processed = false;
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
-        foo(initial);
+        this.initial = initial;
+        solution = new ArrayList<Board>();
+        // foo(initial);
     }
 
     private void foo(Board initial) {
-        this.initial = initial;
-        solution = new ArrayList<Board>();
+
+        processed = true;
 
         Comparator<Board> mcomparator = new Comparator<Board>() {
             @Override
@@ -22,7 +25,7 @@ public class Solver {
                 return arg0.manhattan() - arg1.manhattan();
             }
         };
-        
+
         Comparator<Board> hcomparator = new Comparator<Board>() {
             @Override
             public int compare(Board arg0, Board arg1) {
@@ -58,16 +61,28 @@ public class Solver {
 
     // is the initial board solvable?
     public boolean isSolvable() {
+        Board twin = null;
+        while ((twin = initial.twin()) != null) {
+            if (twin.isGoal()) {
+                return false;
+            }
+        }
         return true;
     }
 
     // min number of moves to solve initial board; -1 if no solution
     public int moves() {
+        if (!processed) {
+            foo(initial);
+        }
         return solution.size() - 1;
     }
 
     // sequence of boards in a shortest solution; null if no solution
     public Iterable<Board> solution() {
+        if (!processed) {
+            foo(initial);
+        }
         return solution;
     }
 
