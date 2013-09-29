@@ -3,12 +3,12 @@ import java.util.List;
 
 public class Board {
     private int[][] blocks;
-//    private int numberOfMove;
+    // private int numberOfMove;
     private int dimension;
 
-//    protected int getMoves(){
-//    	return numberOfMove;
-//    }
+    // protected int getMoves(){
+    // return numberOfMove;
+    // }
     // construct a board from an N-by-N array of blocks
     // (where blocks[i][j] = block in row i, column j)
     public Board(int[][] blocks) {
@@ -154,7 +154,7 @@ public class Board {
             swap(copy, i, j, m, n);
 
             Board board = new Board(copy);
-//            board.numberOfMove = this.numberOfMove + 1;
+            // board.numberOfMove = this.numberOfMove + 1;
             list.add(board);
         }
     }

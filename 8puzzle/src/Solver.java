@@ -2,8 +2,8 @@ import java.util.Comparator;
 
 public class Solver {
 
-//    private List<Board> solution;
-	private SearchNode result;
+    // private List<Board> solution;
+    private SearchNode result;
 
     private static class SearchNode {
         private Board board;
@@ -13,7 +13,7 @@ public class Solver {
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
-//        solution = new ArrayList<Board>();
+        // solution = new ArrayList<Board>();
         bar(initial);
 
     }
@@ -35,7 +35,7 @@ public class Solver {
         while (!queue.isEmpty()) {
             node = queue.delMin();
 
-//            solution.add(node.board);
+            // solution.add(node.board);
             result = node;
 
             if (node.board.isGoal()) {
@@ -44,7 +44,8 @@ public class Solver {
 
             neighbors = node.board.neighbors();
             for (Board neighor : neighbors) {
-                if (node.previousSearchNode == null || !neighor.equals(node.previousSearchNode.board)) {
+                if (node.previousSearchNode == null
+                        || !neighor.equals(node.previousSearchNode.board)) {
                     SearchNode newNode = new SearchNode();
                     newNode.board = neighor;
                     newNode.previousSearchNode = node;
@@ -56,14 +57,15 @@ public class Solver {
             // twin
             twin = twinQueue.delMin();
             if (twin.board.isGoal()) {
-//                solution = null;
+                // solution = null;
                 result = null;
                 return;
             }
 
             neighbors = twin.board.neighbors();
             for (Board neighor : neighbors) {
-                if (twin.previousSearchNode == null || !neighor.equals(twin.previousSearchNode.board)) {
+                if (twin.previousSearchNode == null
+                        || !neighor.equals(twin.previousSearchNode.board)) {
                     SearchNode newNode = new SearchNode();
                     newNode.board = neighor;
                     newNode.previousSearchNode = twin;
@@ -79,7 +81,8 @@ public class Solver {
     private Comparator<SearchNode> mcomparator1 = new Comparator<SearchNode>() {
         @Override
         public int compare(SearchNode arg0, SearchNode arg1) {
-            return arg0.board.manhattan() + arg0.move - arg1.board.manhattan() - arg1.move;
+            return arg0.board.manhattan() + arg0.move - arg1.board.manhattan()
+                    - arg1.move;
         }
     };
 
@@ -90,23 +93,28 @@ public class Solver {
 
     // min number of moves to solve initial board; -1 if no solution
     public int moves() {
-    	if(isSolvable()){
-    		return result.move;
-    	}else{
-    		return -1;
-    	}
+        if (isSolvable()) {
+            return result.move;
+        } else {
+            return -1;
+        }
     }
 
     // sequence of boards in a shortest solution; null if no solution
     public Iterable<Board> solution() {
-    	Stack<Board> s = new Stack<Board>();
-    	SearchNode sn = result;
-    	
-    	s.push(sn.board);
-    	while(sn.previousSearchNode != null){
-    		s.push(sn.previousSearchNode.board);
-    		sn = sn.previousSearchNode;
-    	}
+        Stack<Board> s = new Stack<Board>();
+        if (result == null) {
+            StdOut.println("No solution possible");
+        } else {
+            SearchNode sn = result;
+
+            s.push(sn.board);
+            while (sn.previousSearchNode != null) {
+                s.push(sn.previousSearchNode.board);
+                sn = sn.previousSearchNode;
+            }
+
+        }
         return s;
     }
 
