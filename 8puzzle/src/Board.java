@@ -6,6 +6,9 @@ public class Board {
     private int numberOfMove;
     private int dimension;
 
+    protected int getMoves(){
+    	return numberOfMove;
+    }
     // construct a board from an N-by-N array of blocks
     // (where blocks[i][j] = block in row i, column j)
     public Board(int[][] blocks) {
