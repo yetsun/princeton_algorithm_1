@@ -104,7 +104,7 @@ public class Solver {
     public Iterable<Board> solution() {
         Stack<Board> s = new Stack<Board>();
         if (result == null) {
-            StdOut.println("No solution possible");
+        	return null;
         } else {
             SearchNode sn = result;
 
