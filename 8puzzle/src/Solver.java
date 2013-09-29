@@ -8,6 +8,7 @@ public class Solver {
     private static class SearchNode {
         private Board board;
         private SearchNode previousSearchNode;
+        private int move = 0;
     }
 
     // find a solution to the initial board (using the A* algorithm)
@@ -47,6 +48,7 @@ public class Solver {
                     SearchNode newNode = new SearchNode();
                     newNode.board = neighor;
                     newNode.previousSearchNode = node;
+                    newNode.move = node.move + 1;
                     queue.insert(newNode);
                 }
             }
@@ -65,6 +67,7 @@ public class Solver {
                     SearchNode newNode = new SearchNode();
                     newNode.board = neighor;
                     newNode.previousSearchNode = twin;
+                    newNode.move = twin.move + 1;
                     twinQueue.insert(newNode);
                 }
             }
@@ -76,7 +79,7 @@ public class Solver {
     private Comparator<SearchNode> mcomparator1 = new Comparator<SearchNode>() {
         @Override
         public int compare(SearchNode arg0, SearchNode arg1) {
-            return arg0.board.manhattan() - arg1.board.manhattan();
+            return arg0.board.manhattan() + arg0.move - arg1.board.manhattan() - arg1.move;
         }
     };
 
@@ -88,7 +91,7 @@ public class Solver {
     // min number of moves to solve initial board; -1 if no solution
     public int moves() {
     	if(isSolvable()){
-    		return result.board.getMoves();
+    		return result.move;
     	}else{
     		return -1;
     	}
