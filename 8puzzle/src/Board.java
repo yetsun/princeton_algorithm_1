@@ -6,26 +6,11 @@ public class Board {
     private int numberOfMove;
     private int dimension;
 
-//    private int[][] goal = null;
-
-    private int twinI = 0;
-    private int twinJ = 0;
-
     // construct a board from an N-by-N array of blocks
     // (where blocks[i][j] = block in row i, column j)
     public Board(int[][] blocks) {
-    	
         this.blocks = copyArray(blocks);
         this.dimension = this.blocks[0].length;
-/*        goal = new int[dimension][dimension];
-
-        for (int i = 0; i < dimension; i++) {
-            for (int j = 0; j < dimension; j++) {
-                goal[i][j] = (i * dimension + j + 1);
-            }
-        }
-        goal[dimension - 1][dimension - 1] = 0;*/
-
     }
 
     // board dimension N
@@ -36,19 +21,18 @@ public class Board {
     // number of blocks out of place
     public int hamming() {
         int result = 0;
+        int goal = 0;
         for (int i = 0; i < dimension(); i++) {
             for (int j = 0; j < dimension(); j++) {
-                if (blocks[i][j] != getGoalValue(i, j) && (i != (dimension - 1) || j != (dimension - 1))) {
-                    result++;
+                if (i != (dimension - 1) || j != (dimension - 1)) {
+                    goal++;
+                    if (blocks[i][j] != goal) {
+                        result++;
+                    }
                 }
             }
         }
         return result + numberOfMove;
-    }
-    
-    private int getGoalValue(int i, int j){
-    	if(i == (dimension - 1) && j == (dimension - 1)) return 0;
-    	return (i * dimension + j + 1) ;
     }
 
     // sum of Manhattan distances between blocks and goal
@@ -59,13 +43,13 @@ public class Board {
         int goalJ = 0;
         for (int i = 0; i < dimension(); i++) {
             for (int j = 0; j < dimension(); j++) {
-            	value = blocks[i][j];
-            	if(value != 0){
-            		goalI = (value - 1) / dimension;
-            		goalJ = (value - 1) % dimension;
-					result += i > goalI ? (i - goalI) : (goalI - i);
-					result += j > goalJ ? (j - goalJ) : (goalJ - j);
-            	}
+                value = blocks[i][j];
+                if (value != 0) {
+                    goalI = (value - 1) / dimension;
+                    goalJ = (value - 1) % dimension;
+                    result += i > goalI ? (i - goalI) : (goalI - i);
+                    result += j > goalJ ? (j - goalJ) : (goalJ - j);
+                }
             }
         }
 
@@ -75,66 +59,37 @@ public class Board {
 
     // is this board the goal board?
     public boolean isGoal() {
-
+        int goal = 0;
         for (int i = 0; i < dimension(); i++) {
             for (int j = 0; j < dimension(); j++) {
-                if (getGoalValue(i, j) != blocks[i][j]) {
-                    return false;
+                if (i == (dimension - 1) && j == (dimension - 1)) {
+                    if (0 != blocks[i][j]) {
+                        return false;
+                    }
+                } else {
+                    goal++;
+                    if (goal != blocks[i][j]) {
+                        return false;
+                    }
                 }
             }
         }
         return true;
 
     }
-    
-    
 
     // a board obtained by exchanging two adjacent blocks in the same row
     public Board twin() {
-    	
-    	if(twinI == 0 && twinJ == 0){
-    		int diff = 0;
-    		for (int i = 0; i < dimension(); i++) {
-    			for (int j = 0; j < dimension(); j++) {
-    				if (getGoalValue(i, j) != blocks[i][j] && blocks[i][j] != 0) {
-    					diff++;
-    					if(diff > 2){
-    						return null;
-    					}
-    				}
-    			}
-    		}
-    	}
-    	
-    	
-    	
-        if (twinI >= this.dimension()/* && j >= this.dimension() */) {
-            return null;
-        }
-
-
-        if (twinJ < dimension() - 1) {
-        	if (this.blocks[twinI][twinJ] == 0) {
-        		twinJ++;
-        		return twin();
-        	}
-        	
-            if (this.blocks[twinI][twinJ + 1] == 0) {
-                twinJ++;
-                twinJ++;
-                return twin();
-            } else {
-                Board twin = new Board(copyArray(blocks));
-                swap(twin.blocks, twinI, twinJ, twinI, twinJ + 1);
-                twinJ++;
-                return twin;
+        for (int i = 0; i < dimension; i++) {
+            for (int j = 0; j < dimension - 1; j++) {
+                if (blocks[i][j] != 0 && blocks[i][j + 1] != 0) {
+                    int[][] copy = copyArray(blocks);
+                    swap(copy, i, j, i, j + 1);
+                    return new Board(copy);
+                }
             }
-        } else {
-            twinI++;
-            twinJ = 0;
-            return twin();
-
         }
+        return null;
     }
 
     // does this board equal y?
@@ -143,11 +98,15 @@ public class Board {
         if (y == null) {
             return false;
         }
-        
-        if(y instanceof Board){
+
+        if (y == this) {
+            return true;
+        }
+
+        if (y.getClass() == this.getClass()) {
             Board b = (Board) y;
-            if(b.dimension() != this.dimension){
-            	return false;
+            if (b.dimension() != this.dimension) {
+                return false;
             }
             int[][] target = b.blocks;
             for (int i = 0; i < dimension(); i++) {
@@ -158,10 +117,10 @@ public class Board {
                 }
             }
             return true;
-        }else{
-        	return false;
+        } else {
+            return false;
         }
-    
+
     }
 
     // all neighboring boards
@@ -198,7 +157,7 @@ public class Board {
     }
 
     private int[][] copyArray(int[][] a) {
-    	int dim = a[0].length;
+        int dim = a[0].length;
         int[][] result = new int[dim][dim];
         for (int i = 0; i < dim; i++) {
             for (int j = 0; j < dim; j++) {

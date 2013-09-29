@@ -5,89 +5,102 @@ import java.util.List;
 public class Solver {
 
     private List<Board> solution;
-    private Board initial;
-    private boolean processed = false;
+
+    private static class SearchNode {
+        private Board board;
+        private Board previousBoard;
+    }
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
-        this.initial = initial;
         solution = new ArrayList<Board>();
-        // foo(initial);
+        bar(initial);
+
     }
 
-    private void foo(Board initial) {
+    private void bar(Board initial) {
+        SearchNode node = new SearchNode();
+        node.board = initial;
 
-        processed = true;
+        SearchNode twin = new SearchNode();
+        twin.board = initial.twin();
 
-        Comparator<Board> mcomparator = new Comparator<Board>() {
-            @Override
-            public int compare(Board arg0, Board arg1) {
-                return arg0.manhattan() - arg1.manhattan();
-            }
-        };
+        MinPQ<SearchNode> queue = new MinPQ<SearchNode>(mcomparator1);
+        MinPQ<SearchNode> twinQueue = new MinPQ<SearchNode>(mcomparator1);
 
-  /*      Comparator<Board> hcomparator = new Comparator<Board>() {
-            @Override
-            public int compare(Board arg0, Board arg1) {
-                return arg0.hamming() - arg1.hamming();
-            }
-        };*/
+        queue.insert(node);
+        twinQueue.insert(twin);
 
-        MinPQ<Board> queue = new MinPQ<Board>(mcomparator);
-
-        queue.insert(initial);
-
-        Board board = null;
-        Board previous = null;
+        Iterable<Board> neighbors = null;
         while (!queue.isEmpty()) {
-            board = queue.delMin();
+            node = queue.delMin();
 
-            solution.add(board);
+            solution.add(node.board);
 
-            if (board.isGoal()) {
+            if (node.board.isGoal()) {
                 return;
             }
 
-            Iterable<Board> neighbors = board.neighbors();
+            neighbors = node.board.neighbors();
             for (Board neighor : neighbors) {
-                if (previous == null || !neighor.equals(previous)) {
-                    queue.insert(neighor);
+                if (!neighor.equals(node.previousBoard)) {
+                    SearchNode newNode = new SearchNode();
+                    newNode.board = neighor;
+                    newNode.previousBoard = node.board;
+                    queue.insert(newNode);
                 }
             }
-            previous = board;
+
+            // twin
+            twin = twinQueue.delMin();
+            if (twin.board.isGoal()) {
+                solution = null;
+                return;
+            }
+
+            neighbors = twin.board.neighbors();
+            for (Board neighor : neighbors) {
+                if (!neighor.equals(twin.previousBoard)) {
+                    SearchNode newNode = new SearchNode();
+                    newNode.board = neighor;
+                    newNode.previousBoard = twin.board;
+                    twinQueue.insert(newNode);
+                }
+            }
 
         }
+
     }
-    
+
+    private Comparator<SearchNode> mcomparator1 = new Comparator<SearchNode>() {
+        @Override
+        public int compare(SearchNode arg0, SearchNode arg1) {
+            return arg0.board.manhattan() - arg1.board.manhattan();
+        }
+    };
+
     // is the initial board solvable?
     public boolean isSolvable() {
-        Board twin = null;
-        while ((twin = initial.twin()) != null) {
-            if (twin.isGoal()) {
-                return false;
-            }
-        }
-        return true;
+        return solution != null;
     }
 
     // min number of moves to solve initial board; -1 if no solution
     public int moves() {
-        if (!processed) {
-            foo(initial);
+        if (solution == null) {
+            return -1;
+        } else {
+            return solution.size() - 1;
         }
-        return solution.size() - 1;
     }
 
     // sequence of boards in a shortest solution; null if no solution
     public Iterable<Board> solution() {
-        if (!processed) {
-            foo(initial);
-        }
         return solution;
     }
 
     // solve a slider puzzle (given below)
     public static void main(String[] args) {
+
         // create initial board from file
         In in = new In(args[0]);
         int N = in.readInt();
@@ -97,10 +110,9 @@ public class Solver {
                 blocks[i][j] = in.readInt();
         Board initial = new Board(blocks);
 
-//        System.out.println(initial.hamming());
-//        initial.twin();
-        
-        
+        // System.out.println(initial.hamming());
+        // initial.twin();
+
         // solve the puzzle
         Solver solver = new Solver(initial);
 
@@ -112,5 +124,6 @@ public class Solver {
             for (Board board : solver.solution())
                 StdOut.println(board);
         }
+
     }
 }
